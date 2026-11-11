@@ -29,8 +29,8 @@ Environment:
 - `A11Y_TEST_FONT=ahem` uses the default test font; `=roboto` see "Fonts".
 - `A11Y_DEBUG=1` prints the stack of errors the harness records.
 
-Two runs give byte-identical findings (666 findings on 121 screens at the time of
-writing).
+Two runs give byte-identical findings (648 findings on 121 screens at flutter-a11y
+0.5.0).
 
 ## Why it lives in yivi_core and not in yivi_app
 
@@ -148,11 +148,13 @@ is not answered: starting a chip read fails, which shows the app's read-error st
   at 2.0 text scale and 320 px, `sourceRoots` = `lib/`.
 - **Dialogs, sheets and the lock screen are audited with what is under them.** The lock
   screen is an overlay stacked on the home screen, so home's widgets are in the tree
-  while it shows. The overflow rules scan every `RenderFlex`, and report the bottom
-  navigation bar's labels (`irma_nav_button.dart:54`) whether the bar is visible or
-  covered: 105 of the 666 findings are at that line. Labellers should expect them on
+  while it shows. The overflow rules scan every painted `RenderFlex`, and report the
+  bottom navigation bar's labels (`irma_nav_button.dart:54`) whether the bar is visible
+  or covered: 87 of the 648 findings are at that line. Labellers should expect them on
   `pin*`, `error/blocked`, `error/no-internet`, `reset-pin*`, `terms-changed` and
-  dialogs over a tab as well as on the tabs themselves.
+  dialogs over a tab as well as on the tabs themselves. Since flutter-a11y 0.5.0 they
+  are no longer reported on a page pushed over home by an opaque route (activity and
+  credential details, developer mode), which removed 18 of them.
 - **One screen id per state.** A dialog over a screen is its own id and repeats the
   findings of the screen under it.
 - **Dates.** Card and log dates are fixed; activity times are rendered in the host's

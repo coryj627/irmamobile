@@ -58,7 +58,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: coryj627/flutter-a11y
-          ref: 5d9d3d0cb993998f8bf45632ebb4f09e7f619b6d
+          ref: 0.4.0
           token: ${{ secrets.FLUTTER_A11Y_READ_TOKEN }}
           path: .flutter-a11y
 
@@ -69,7 +69,7 @@ jobs:
         uses: ./.flutter-a11y
         with:
           working-directory: yivi_core
-          ref: 5d9d3d0cb993998f8bf45632ebb4f09e7f619b6d
+          ref: 0.4.0
           run-tests: "true"
           test-args: test/a11y
 

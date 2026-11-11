@@ -370,20 +370,20 @@ packages:
     dependency: transitive
     description:
       path: "packages/flutter_a11y_core"
-      ref: "5d9d3d0cb993998f8bf45632ebb4f09e7f619b6d"
-      resolved-ref: "5d9d3d0cb993998f8bf45632ebb4f09e7f619b6d"
+      ref: "0b0915a5686436287102c53fc224d405fc5735c9"
+      resolved-ref: "0b0915a5686436287102c53fc224d405fc5735c9"
       url: "https://github.com/coryj627/flutter-a11y.git"
     source: git
-    version: "0.3.0"
+    version: "0.4.0"
   flutter_a11y_test:
     dependency: "direct dev"
     description:
       path: "packages/flutter_a11y_test"
-      ref: "5d9d3d0cb993998f8bf45632ebb4f09e7f619b6d"
-      resolved-ref: "5d9d3d0cb993998f8bf45632ebb4f09e7f619b6d"
+      ref: "0.4.0"
+      resolved-ref: "0b0915a5686436287102c53fc224d405fc5735c9"
       url: "https://github.com/coryj627/flutter-a11y.git"
     source: git
-    version: "0.3.0"
+    version: "0.4.0"
   flutter_bloc:
     dependency: "direct main"
     description:

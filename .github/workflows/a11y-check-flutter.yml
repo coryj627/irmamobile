@@ -51,13 +51,13 @@ jobs:
         run: |
           git config --global url."https://x-access-token:${TOKEN}@github.com/".insteadOf "https://github.com/"
 
-      # Pinned to the release tag 0.5.0. The same tag is the flutter_a11y_test
+      # Pinned to the release tag 0.5.1. The same tag is the flutter_a11y_test
       # dependency in yivi_core/pubspec.yaml.
       - name: Fetch the a11y-check-flutter action
         uses: actions/checkout@v4
         with:
           repository: coryj627/flutter-a11y
-          ref: 0.5.0
+          ref: 0.5.1
           token: ${{ secrets.FLUTTER_A11Y_READ_TOKEN }}
           path: .flutter-a11y
 
@@ -68,7 +68,7 @@ jobs:
         uses: ./.flutter-a11y
         with:
           working-directory: yivi_core
-          ref: 0.5.0
+          ref: 0.5.1
           run-tests: "true"
           test-args: test/a11y
 

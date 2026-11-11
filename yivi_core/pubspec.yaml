@@ -87,6 +87,14 @@ dev_dependencies:
   flutter_native_splash: ^2.4.6
   build_runner: ^2.10.5
   flutter_launcher_icons: ^0.14.1
+  # Runtime accessibility audit (test/a11y), dogfood of coryj627/flutter-a11y on
+  # this fork only. Pinned to a commit of main that reads apps built on
+  # package:material_ui / package:cupertino_ui; a release tag will replace it.
+  flutter_a11y_test:
+    git:
+      url: https://github.com/coryj627/flutter-a11y.git
+      ref: 5d9d3d0cb993998f8bf45632ebb4f09e7f619b6d
+      path: packages/flutter_a11y_test
 
 # altcha_lib pulls pointycastle from pub.dev, but vcmrtd pulls it from the
 # privacybydesign/pc-dart fork; pub cannot unify a hosted and a git source for

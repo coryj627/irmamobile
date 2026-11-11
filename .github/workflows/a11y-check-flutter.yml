@@ -1,0 +1,81 @@
+# Dogfood workflow for the privacybydesign/irmamobile fork: scans the Flutter package
+# with the app's screens (yivi_core/) with a11y-check-flutter. Static lint plus the
+# runtime audit in yivi_core/test/a11y, which pumps the real app over a stand-in for the
+# Go core, screen by screen (see yivi_core/test/a11y/README.md).
+# Review-only: once yivi_core/.a11y/flutter/baseline.json is committed it is the accepted
+# floor, and the job fails only on a NEW finding at or above the config's fail_at.
+#
+# Prepared for later; nothing triggers it until this branch is pushed.
+#
+# One-time setup in the fork:
+#   1. Secret FLUTTER_A11Y_READ_TOKEN: a fine-grained PAT with Contents: Read-only
+#      on coryj627/flutter-a11y (private). It lets `pub get` fetch flutter_a11y_test
+#      and `dart pub global activate` fetch the CLI.
+#   2. Code scanning must be enabled on the fork for the SARIF upload step.
+#
+# This fork is public and coryj627/flutter-a11y is private: a public repository can
+# never `uses:` an action from a private one, so the action is checked out with the
+# read token and run as a local action.
+name: a11y-check-flutter
+
+on:
+  push:
+    branches: [a11y-dogfood]
+  pull_request:
+    branches: [a11y-dogfood]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write # github/codeql-action/upload-sarif
+
+jobs:
+  a11y:
+    name: a11y-check-flutter
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      # flutter_a11y_test needs Flutter >= 3.47 (Dart ^3.13); yivi_core asks for
+      # Dart ^3.10 and uses package:material_ui, which is Flutter 3.47 as well.
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.9
+          cache: true
+
+      - name: Read access to coryj627/flutter-a11y (private)
+        env:
+          TOKEN: ${{ secrets.FLUTTER_A11Y_READ_TOKEN }}
+        run: |
+          git config --global url."https://x-access-token:${TOKEN}@github.com/".insteadOf "https://github.com/"
+
+      # Pinned to the commit of main that reads apps built on package:material_ui and
+      # package:cupertino_ui; a release tag will replace it. The same commit is the
+      # flutter_a11y_test dependency in yivi_core/pubspec.yaml.
+      - name: Fetch the a11y-check-flutter action
+        uses: actions/checkout@v4
+        with:
+          repository: coryj627/flutter-a11y
+          ref: 5d9d3d0cb993998f8bf45632ebb4f09e7f619b6d
+          token: ${{ secrets.FLUTTER_A11Y_READ_TOKEN }}
+          path: .flutter-a11y
+
+      # The screens live in the yivi_core package; .a11y/ is next to its pubspec.yaml.
+      # Only test/a11y is run: the audit needs no Go bridge, emulator or network.
+      - name: Scan (pub get → flutter test test/a11y → a11y_check_flutter scan)
+        id: a11y
+        uses: ./.flutter-a11y
+        with:
+          working-directory: yivi_core
+          ref: 5d9d3d0cb993998f8bf45632ebb4f09e7f619b6d
+          run-tests: "true"
+          test-args: test/a11y
+
+      - name: Upload SARIF to code scanning
+        if: always() && steps.a11y.outputs.sarif != ''
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ steps.a11y.outputs.sarif }}
+          category: a11y-check-flutter

@@ -488,6 +488,15 @@ Future<A11yAuditResult?> audit(
         screenId: screenId,
         config: auditConfig(),
       );
+    } on A11yReflowException catch (e) {
+      // Since flutter-a11y 0.4.1 a reflow pass that raises an error other than an
+      // overflow is aborted on its own: it contributes no finding, the other passes
+      // and every earlier phase keep theirs, and the result (already recorded to the
+      // sink) comes with the exception. The log names the aborted passes.
+      result = e.result;
+      reflowNotRun = e.failures
+          .map((f) => "${f.ruleId} (${f.pass}): ${f.summary}")
+          .join("; ");
     } on FlutterError catch (e) {
       // The reflow phase rethrows any error a widget reports while it is laid out
       // again that is not an overflow, and the findings of the phases before it are

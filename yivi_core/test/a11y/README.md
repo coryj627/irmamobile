@@ -164,10 +164,21 @@ Recorded per screen in `runtime-screens.json` (`exceptions`, `asyncErrors`), not
 
 - `issue-sms/country-picker`: every row of the country list (package
   intl_phone_number_input) reports the debug-only assertion "ListTile background color
-  or ink splashes may be invisible". The reflow phase of `auditScreen` rethrows any
-  non-overflow error and loses the findings of the earlier phases with it, so this one
-  screen is audited with `reflow: false` (`reflowNotRun` in the log) instead of not at
-  all. The next screen, `issue-sms/verify`, logs the tail of the same assertions.
+  or ink splashes may be invisible" whenever it is built. Since flutter-a11y 0.4.1 a
+  reflow pass that raises an error other than an overflow is aborted on its own and
+  `auditScreen` throws `A11yReflowException` carrying the rest of the result (already
+  in the findings file, with a `reflow-pass-aborted` diagnostic); the harness keeps
+  that result and lists the aborted passes under `reflowNotRun` in the log, as
+  `<rule> (<pass>): <first line of the error>`. Here the text scale 2.0x pass aborts,
+  and so does putting the view back after it (the rows are rebuilt and assert again);
+  after a failed restore `auditScreen` attempts no further pass, so the 320 px pass
+  does not run either, although the log does not name it. Neither reflow rule is
+  evaluated on this screen, as before. (Under 0.4.0 `reflowNotRun` held the first line
+  of the rethrown error, and the screen was audited again with `reflow: false`; that
+  retry is kept for any other `FlutterError`.)
+- `issue-sms/verify` logs the assertions raised while the `back` step closes the
+  country sheet (its rows are rebuilt during the transition), not leftovers of the
+  previous audit.
 
 ## Screens audited (121)
 

@@ -172,7 +172,9 @@ Recorded per screen in `runtime-screens.json` (`exceptions`, `asyncErrors`), not
   `<rule> (<pass>): <first line of the error>`. Here the text scale 2.0x pass aborts,
   and so does putting the view back after it (the rows are rebuilt and assert again);
   after a failed restore `auditScreen` attempts no further pass, so the 320 px pass
-  does not run either, although the log does not name it. Neither reflow rule is
+  does not run either; since flutter-a11y 0.4.2 the engine names it among the
+  failures ("not attempted, because the view could not be restored after text scale
+  2.0x"), so the log lists it too (0.4.1 skipped it unnamed). Neither reflow rule is
   evaluated on this screen, as before. (Under 0.4.0 `reflowNotRun` held the first line
   of the rethrown error, and the screen was audited again with `reflow: false`; that
   retry is kept for any other `FlutterError`.)

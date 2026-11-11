@@ -88,12 +88,12 @@ dev_dependencies:
   build_runner: ^2.10.5
   flutter_launcher_icons: ^0.14.1
   # Runtime accessibility audit (test/a11y), dogfood of coryj627/flutter-a11y on
-  # this fork only. Pinned to a commit of main that reads apps built on
-  # package:material_ui / package:cupertino_ui; a release tag will replace it.
+  # this fork only. Pinned to the release tag 0.4.2 (the same tag as the action in
+  # .github/workflows/a11y-check-flutter.yml).
   flutter_a11y_test:
     git:
       url: https://github.com/coryj627/flutter-a11y.git
-      ref: 0.4.1
+      ref: 0.4.2
       path: packages/flutter_a11y_test
 
 # altcha_lib pulls pointycastle from pub.dev, but vcmrtd pulls it from the
